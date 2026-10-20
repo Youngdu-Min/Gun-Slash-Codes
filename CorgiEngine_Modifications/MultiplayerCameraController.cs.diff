@@ -35,7 +35,7 @@ index ceee490..786d10f 100644
 @@ -148,4 +148,5 @@ namespace MoreMountains.CorgiEngine
                  {
                      Players.RemoveAt(i);
-+                    Debug.Log("Á¦°Å");
++                    Debug.Log("ì œê±°");
                  }					
  			}
 @@ -289,5 +290,4 @@ namespace MoreMountains.CorgiEngine

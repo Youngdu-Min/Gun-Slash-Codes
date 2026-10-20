@@ -221,7 +221,7 @@ index 6219eb1..2f379fd 100644
  				}
  				else
 -					StartCoroutine (RemovePlayer (player));
-+					StartCoroutine (RemovePlayer (player)); Debug.Log("¡¶∞≈µ ");
++					StartCoroutine (RemovePlayer (player)); Debug.Log("Ï†úÍ±∞Îê®");
  			}
  
 @@ -107,8 +290,4 @@ namespace MoreMountains.CorgiEngine
