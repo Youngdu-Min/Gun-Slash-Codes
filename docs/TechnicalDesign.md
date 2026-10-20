@@ -52,9 +52,9 @@ Corgi의 입력 매니저는 `Player1_Horizontal`, `Player1_Jump`처럼 **플레
 
 ```mermaid
 flowchart LR
-    K[Joystick2의 참가 키 입력] --> J[PlayerJoin&#40;'Joystick2'&#41;]
+    K[Joystick2의 참가 키 입력] --> J["PlayerJoin('Joystick2')"]
     J --> L[참가 목록: P1=Keyboard1, P2=Joystick2 ...]
-    L --> S[스폰 시 player.SetPlayerID&#40;'Joystick2'&#41;]
+    L --> S["스폰 시 player.SetPlayerID('Joystick2')"]
     S --> I[입력 매니저가 Joystick2_Horizontal,<br/>Joystick2_Jump ... 를 읽음]
 ```
 
