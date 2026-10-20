@@ -1,0 +1,46 @@
+diff --git a/Assets/CorgiEngine/Common/Scripts/Camera/Regular/MultiplayerCameraController.cs b/Assets/CorgiEngine/Common/Scripts/Camera/Regular/MultiplayerCameraController.cs
+index ceee490..786d10f 100644
+--- a/Assets/CorgiEngine/Common/Scripts/Camera/Regular/MultiplayerCameraController.cs
++++ b/Assets/CorgiEngine/Common/Scripts/Camera/Regular/MultiplayerCameraController.cs
+@@ -63,5 +63,5 @@ namespace MoreMountains.CorgiEngine
+ 		protected virtual void Start()
+ 		{
+-			Initialization ();
++			
+ 		}
+ 
+@@ -69,5 +69,5 @@ namespace MoreMountains.CorgiEngine
+ 		/// Stores initial position, aspect ratio, field of view, detects targets and level bounds
+ 		/// </summary>
+-		protected virtual void Initialization()
++		public virtual void Initialization()
+ 		{
+ 			_camera = this.gameObject.GetComponentInChildren<Camera>();
+@@ -90,6 +90,6 @@ namespace MoreMountains.CorgiEngine
+ 		{
+ 			Players = new List<Transform> ();
+-
+-			if ( (LevelManager.Instance.Players == null) || (LevelManager.Instance.Players.Count == 0) )
++            ;
++            if ( (MultiplayerLevelManager.Instance.Players == null) || (MultiplayerLevelManager.Instance.Players.Count == 0) )
+ 			{
+ 				Debug.LogWarning ("CameraController : The LevelManager couldn't find a Player character. Make sure there's one set in the Level Manager. The camera script won't work without that.");
+@@ -97,5 +97,5 @@ namespace MoreMountains.CorgiEngine
+ 			}
+ 
+-			foreach(Character player in LevelManager.Instance.Players)
++			foreach(Character player in MultiplayerLevelManager.Instance.Players)
+ 			{
+ 				Players.Add (player.transform);
+@@ -148,4 +148,5 @@ namespace MoreMountains.CorgiEngine
+                 {
+                     Players.RemoveAt(i);
++                    Debug.Log("Á¦°Å");
+                 }					
+ 			}
+@@ -289,5 +290,4 @@ namespace MoreMountains.CorgiEngine
+ 				_newPosition.z = Mathf.Clamp(_newPosition.z, MinPosition.z, MaxPosition.z);
+ 			}
+-
+ 		}
+ 	}

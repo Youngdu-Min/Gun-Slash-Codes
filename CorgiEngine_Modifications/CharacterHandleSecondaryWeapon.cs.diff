@@ -1,0 +1,17 @@
+diff --git a/Assets/CorgiEngine/Common/Scripts/Agents/CharacterAbilities/CharacterHandleSecondaryWeapon.cs b/Assets/CorgiEngine/Common/Scripts/Agents/CharacterAbilities/CharacterHandleSecondaryWeapon.cs
+index 77f3fd5..08f3272 100644
+--- a/Assets/CorgiEngine/Common/Scripts/Agents/CharacterAbilities/CharacterHandleSecondaryWeapon.cs
++++ b/Assets/CorgiEngine/Common/Scripts/Agents/CharacterAbilities/CharacterHandleSecondaryWeapon.cs
+@@ -40,8 +40,8 @@ namespace MoreMountains.CorgiEngine
+             }
+ 
+-            if (_inputManager.ReloadButton.State.CurrentState == MMInput.ButtonStates.ButtonDown)
+-            {
+-                Reload();
+-            }
++            // if (_inputManager.ReloadButton.State.CurrentState == MMInput.ButtonStates.ButtonDown)
++            // {
++            //     Reload();
++            // }
+ 
+             if ((_inputManager.SecondaryShootButton.State.CurrentState == MMInput.ButtonStates.ButtonUp) || (_inputManager.SecondaryShootAxis == MMInput.ButtonStates.ButtonUp))

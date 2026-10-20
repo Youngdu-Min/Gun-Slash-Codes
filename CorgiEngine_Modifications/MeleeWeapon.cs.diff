@@ -1,0 +1,296 @@
+--- a/Assets/CorgiEngine/Common/Scripts/Agents/Weapons/MeleeWeapon.cs (Corgi Engine original)
++++ b/Assets/CorgiEngine/Common/Scripts/Agents/Weapons/MeleeWeapon.cs
+@@ -1,3 +1,3 @@
+-﻿using UnityEngine;
++using UnityEngine;
+ using System.Collections;
+ using MoreMountains.Tools;
+@@ -47,12 +47,10 @@
+ 		public DamageOnTouch.KnockbackStyles Knockback;
+ 		/// The force to apply to the object that gets damaged
+-		[Tooltip("The force to apply to the object that gets damaged")]
+-		public Vector2 KnockbackForce = new Vector2(10,2);
+-		/// The duration of the invincibility frames after the hit (in seconds)
+ 		[Tooltip("The duration of the invincibility frames after the hit (in seconds)")]
+ 		public float InvincibilityDuration = 0.5f;
+ 
+ 		protected Collider2D _damageAreaCollider;
+-		protected bool _attackInProgress = false;
++        [HideInInspector]
++        public bool _attackInProgress = false;
+ 
+         protected Color _gizmosColor;
+@@ -62,5 +60,6 @@
+         protected BoxCollider2D _boxCollider2D;
+         protected Vector3 _gizmoOffset;
+-        protected DamageOnTouch _damageOnTouch;
++        [HideInInspector]
++        public DamageOnTouch _damageOnTouch;
+         protected GameObject _damageArea;
+         
+@@ -69,5 +68,18 @@
+         protected bool _hitNonDamageableEventSent = false;
+         protected bool _killEventSent = false;
+-        
++        [MMInspectorGroup("딜레이, 쿨다운", true, 76)]
++        [Tooltip("쿨다운")]
++        public float coolDown;
++        [Tooltip("나이프 거리")]
++        public float knifeDistance;
++        float currCoolDown;
++        CharacterHorizontalMovement horizontalMovement;
++        float _distanceTraveled;
++        Vector3 _initialPosition;
++        public float knifeSpeed;
++        WeaponAim aim;
++        [SerializeField]
++        GameObject lightObj;
++        Character _character;
+         /// <summary>
+         /// Initialization
+@@ -83,6 +95,31 @@
+             }
+             _damageOnTouch.Owner = Owner.gameObject;
++
++            _damageOnTouch.ClearIgnoreList();
++            _damageOnTouch.IgnoreGameObject(_damageOnTouch.Owner.gameObject);
++            horizontalMovement = Owner.GetComponent<CharacterHorizontalMovement>();
++            aim = this.GetComponent<WeaponAim>();
++            _character = Owner.GetComponent<Character>();
++        }
++
++        protected override void Update()
++        {
++            ApplyOffset();
++
++            if (!_attackInProgress)
++            {
++                currCoolDown -= Time.deltaTime;
++
++                // We update the knife bar
++                if (GUIManager.Instance != null)
++                {
++                    float timer = coolDown - currCoolDown;
++                    GUIManager.Instance.UpdateKnifeBar(timer, 0, coolDown, _character.playerName);
++
+         }
+ 
++
++            }
++        }
+ 		/// <summary>
+ 		/// Creates the damage area.
+@@ -119,15 +156,64 @@
+ 			_damageOnTouch.DamageCaused = DamageCaused;
+ 			_damageOnTouch.DamageCausedKnockbackType = Knockback;
+-			_damageOnTouch.DamageCausedKnockbackForce = KnockbackForce;
++
+ 			_damageOnTouch.InvincibilityDuration = InvincibilityDuration;
++
+ 		}
+ 
+-		/// <summary>
+-		/// When the weapon is used, we trigger our attack routine
+-		/// </summary>
+-		protected override void WeaponUse()
++        protected override void TurnWeaponOn()
++        {
++            Debug.Log("coolDown " + currCoolDown);
++            TriggerWeaponStartFeedback();
++
++            WeaponState.ChangeState(WeaponStates.WeaponStart);
++            if ((_characterHorizontalMovement != null) && (ModifyMovementWhileAttacking))
+ 		{
+-			base.WeaponUse ();
++                _movementMultiplierStorage = _characterHorizontalMovement.MovementSpeedMultiplier;
++                _characterHorizontalMovement.MovementSpeedMultiplier = MovementMultiplier;
++            }
++            if (_comboWeapon != null)
++            {
++                _comboWeapon.WeaponStarted(this);
++            }
++            if (PreventHorizontalMovementWhileInUse && (_characterHorizontalMovement != null) && (_controller != null))
++            {
++                _controller.SetForce(Vector2.zero);
++                _characterHorizontalMovement.SetHorizontalMove(0f);
++                _characterHorizontalMovement.MovementForbidden = true;
++            }
++
++            if (currCoolDown <= 0)
++            {
++                if (_controller.State.IsGrounded && ((!Owner.IsFacingRight && aim.CurrentAngle == 45) || (Owner.IsFacingRight && aim.CurrentAngle == -45) || (Owner.IsFacingRight && aim.CurrentAngle == -90) || (!Owner.IsFacingRight && aim.CurrentAngle == 90)))
++                {
++                    return;
++                }
++                Debug.Log("weaponON");
++                TriggerWeaponUsedFeedback();
++                _initialPosition = this.transform.position;
++                // Debug.Log(isCharge);
++
++                _applyForceWhileInUse = true;
++                StartCoroutine(ApplyForceWhileInUseCo());
+ 			StartCoroutine(MeleeWeaponAttack());
++                currCoolDown = coolDown;
++
++                lightObj.SetActive(true);
++            }
++            /*
++            if (currCoolDown > 0)
++            {
++                SetForceWhileInUse = false;
++                return;
++            }
++            else
++            {
++                SetForceWhileInUse = true;
++            }*/
++        }
++
++        protected override void WeaponUse()
++        {
++            ApplyRecoil(ApplyRecoilOnUse, RecoilOnUseProperties);
+ 		}
+ 
+@@ -136,9 +222,12 @@
+ 		/// </summary>
+ 		/// <returns>The weapon attack.</returns>
+-		protected virtual IEnumerator MeleeWeaponAttack()
++
++        public IEnumerator MeleeWeaponAttack()
+ 		{
++            Debug.Log("Attack");
+ 			if (_attackInProgress) { yield break; }
+-
++            horizontalMovement.enabled = _attackInProgress;
+ 			_attackInProgress = true;
++
+ 			yield return new WaitForSeconds(InitialDelay);
+ 			EnableDamageArea();
+@@ -146,6 +235,9 @@
+ 			HandleMiss();
+ 			yield return new WaitForSeconds(ActiveDuration);
++
+ 			DisableDamageArea();
+ 			_attackInProgress = false;
++            horizontalMovement.enabled = !_attackInProgress;
++
+ 		}
+ 
+@@ -160,4 +252,13 @@
+ 			_killEventSent = false;
+             _damageAreaCollider.enabled = true;
++
++            if (!Owner.IsFacingRight)
++            {
++                _damageArea.transform.localScale = new Vector3(-1, 1, 1);
++            }
++            else
++            {
++                _damageArea.transform.localScale = new Vector3(1, 1, 1);
++            }
+ 		}
+ 
+@@ -179,4 +280,6 @@
+ 		{
+             _damageAreaCollider.enabled = false;
++            lightObj.SetActive(false);
++            Debug.Log("OFF");
+         }
+ 
+@@ -215,8 +318,19 @@
+         protected virtual void OnHit()
+         {
++            Debug.Log("실행1");
++            // _delayBetweenUsesCounter = 0;
+ 	        if (!_hitEventSent)
+ 	        {
+ 		        WeaponHit();
+ 		        _hitEventSent = true;
++
++            }
++            if (_damageOnTouch._collidingCollider.gameObject.layer == 8 || _damageOnTouch._collidingCollider.gameObject.layer == 11)
++            {
++                Debug.Log("실행");
++                _controller.SetForce(Vector3.zero);
++                TurnWeaponOff();
++                DisableDamageArea();
++                horizontalMovement.enabled = true;
+ 	        }
+         }
+@@ -227,4 +341,5 @@
+         protected virtual void OnHitDamageable()
+         {
++            Debug.Log("실행 데미지");
+ 	        if (!_hitDamageableEventSent)
+ 	        {
+@@ -239,8 +354,10 @@
+         protected virtual void OnHitNonDamageable()
+         {
++            Debug.Log("실행 논데미지");
+ 	        if (!_hitNonDamageableEventSent)
+ 	        {
+ 		        WeaponHitNonDamageable();
+ 		        _hitNonDamageableEventSent = true;
++
+ 	        }
+         }
+@@ -257,4 +374,53 @@
+ 	        }
+         }
++        protected override IEnumerator ApplyForceWhileInUseCo()
++        {
++            Vector3 v = transform.right * knifeSpeed;
++            if (!Owner.IsFacingRight)
++                v = -transform.right * knifeSpeed;
++
++            while (_applyForceWhileInUse)
++            {
++                _distanceTraveled = Vector3.Distance(_initialPosition, this.transform.position);
++
++                _forceWhileInUse = ForceWhileInUse;
++
++                if (!ForceToAim)
++                {
++
++                    if (Owner != null)
++                    {
++                        _forceWhileInUse.x = Owner.IsFacingRight ? _forceWhileInUse.x : -_forceWhileInUse.x;
++                    }
++
++                    _controller.SetForce(_forceWhileInUse);
++                }
++                else
++                {
++                    _controller.SetForce(v);
++                }
++
++
++                if (_distanceTraveled < knifeDistance)// && currCoolDown > 0)
++                {
++                    Debug.Log("travel: " + _distanceTraveled);
++                    if ((TriggerMode == TriggerModes.Auto) && !_triggerReleased)
++                    {
++                        ShootRequest();
++                    }
++
++                }
++                else
++                {
++                    Debug.Log("travelEnd: " + _distanceTraveled);
++                    TurnWeaponOff();
++                    horizontalMovement.enabled = true;
++                    yield break;
++                }
++
++                yield return null;
++            }
++            DisableDamageArea();
++        }
+ 
+         /// <summary>
+@@ -277,4 +443,5 @@
+         protected virtual void OnDisable()
+         {
++            Debug.Log("실행 뺌");
+ 	        if (_damageOnTouch != null)
+ 	        {

@@ -1,0 +1,235 @@
+diff --git a/Assets/CorgiEngine/Common/Scripts/Managers/MultiplayerLevelManager.cs b/Assets/CorgiEngine/Common/Scripts/Managers/MultiplayerLevelManager.cs
+index 6219eb1..2f379fd 100644
+--- a/Assets/CorgiEngine/Common/Scripts/Managers/MultiplayerLevelManager.cs
++++ b/Assets/CorgiEngine/Common/Scripts/Managers/MultiplayerLevelManager.cs
+@@ -4,4 +4,5 @@ using System.Linq;
+ using System;
+ using UnityEngine;
++using UnityEngine.UI;
+ using UnityEngine.SceneManagement;
+ using MoreMountains.Tools;
+@@ -17,8 +18,185 @@ namespace MoreMountains.CorgiEngine
+ 		Character killedPlayer;
+ 		public CheckPoint startAfterDeath;
++        public string startSceneName;
++		public GameObject playerJoinMenu;
++		private List<string> joinList = new List<string>();
++		private int joinPlayer;
++		private int startLeft = 2;
++		Text startText;
++		GameObject hud;
++        public GameObject weaponSpawner;
++        public MultiplayerCameraController multiplayerCamera;
++        public Sprite emptyHeart;
+ 		/// <summary>
+ 		/// Checks the multiplayer end game conditions
+ 		/// </summary>
+ 
++		public override void Start()
++		{
++			startText = playerJoinMenu.transform.GetChild(playerJoinMenu.transform.childCount - 1).GetComponentInChildren<Text>();
++			startText.text = "Start Game  " + startLeft + " Left";
++
++			hud = GameObject.Find("HUD");
++		}
++
++		public void GameStart()
++        {
++			if(startLeft > 0)
++            {
++				return;
++            }
++
++            for (int i = 0; i < joinPlayer; i++)
++            {
++				hud.transform.GetChild(i).gameObject.SetActive(true);
++            }
++
++			InstantiatePlayableCharacters();
++			if (Players == null || Players.Count == 0) { return; }
++
++			Initialization();
++            multiplayerCamera.Initialization();
++
++
++            CorgiEngineEvent.Trigger(CorgiEngineEventTypes.SpawnCharacterStarts);
++
++			// we handle the spawn of the character(s)
++			if (Players.Count == 1)
++			{
++				SpawnSingleCharacter();
++			}
++			else
++			{
++				SpawnMultipleCharacters();
++			}
++
++			LevelGUIStart();
++			CheckpointAssignment();
++
++			// we trigger a level start event
++			CorgiEngineEvent.Trigger(CorgiEngineEventTypes.LevelStart);
++			MMGameEvent.Trigger("Load");
++
++			MMCameraEvent.Trigger(MMCameraEventTypes.SetConfiner, null, BoundsCollider, BoundsCollider2D);
++			MMCameraEvent.Trigger(MMCameraEventTypes.SetTargetCharacter, Players[0]);
++			MMCameraEvent.Trigger(MMCameraEventTypes.StartFollowing);
++
++			playerJoinMenu.SetActive(false);
++            weaponSpawner.SetActive(true);
++
++        }
++
++		public void PlayerJoin(string str)
++        {
++			Debug.Log("Join");
++			if (joinPlayer >= 4 || joinList.Contains(str))
++			{
++				return;
++			}
++			playerJoinMenu.transform.GetChild(joinPlayer).GetComponentInChildren<Text>().text = "P" + (joinPlayer + 1) + "  Joined" + "   " + "( " + str + " )";
++			startLeft--;
++			if(startLeft <= 0)
++				startText.text = "Start Game  " + " ( Ready )";
++			else
++				startText.text = "Start Game  " + startLeft + " Left";
++			joinList.Add(str);
++			joinPlayer++;
++        }
++
++		protected override void InstantiatePlayableCharacters()
++		{
++			Players = new List<Character>();
++
++			if (GameManager.Instance.PersistentCharacter != null)
++			{
++				Players.Add(GameManager.Instance.PersistentCharacter);
++				return;
++			}
++
++			// we check if there's a stored character in the game manager we should instantiate
++			if (GameManager.Instance.StoredCharacter != null)
++			{
++				Character newPlayer = (Character)Instantiate(GameManager.Instance.StoredCharacter, new Vector3(0, 0, 0), Quaternion.identity);
++				newPlayer.name = GameManager.Instance.StoredCharacter.name;
++				Players.Add(newPlayer);
++				return;
++			}
++
++			if ((SceneCharacters != null) && (SceneCharacters.Count > 0))
++			{
++				foreach (Character character in SceneCharacters)
++				{
++					Players.Add(character);
++				}
++				return;
++			}
++
++			if (PlayerPrefabs == null) { return; }
++
++			// player instantiation
++			if (PlayerPrefabs.Count() != 0)
++			{
++                for (int i = 0; i < joinPlayer; i++)
++                {
++					Character playerPrefab = PlayerPrefabs[i];
++					Character newPlayer = (Character)Instantiate(playerPrefab, new Vector3(0, 0, 0), Quaternion.identity);
++					newPlayer.name = playerPrefab.name;
++					Players.Add(newPlayer);
++
++					if (playerPrefab.CharacterType != Character.CharacterTypes.Player)
++					{
++						Debug.LogWarning("LevelManager : The Character you've set in the LevelManager isn't a Player, which means it's probably not going to move. You can change that in the Character component of your prefab.");
++					}
++
++                }
++			}
++			else
++			{
++				//Debug.LogWarning ("LevelManager : The Level Manager doesn't have any Player prefab to spawn. You need to select a Player prefab from its inspector.");
++				return;
++			}
++
++            Debug.Log("Players " + Players.Count);
++		}
++
++		protected override void SpawnMultipleCharacters()
++		{
++			int checkpointCounter = 0;
++			int characterCounter = 1;
++			bool spawned = false;
++            for (int i = 0; i < joinPlayer; i++)
++            {
++				Character player = Players[i];
++
++				spawned = false;
++
++				if (AutoAttributePlayerIDs)
++				{
++					player.playerName = "Player" + characterCounter;
++				}
++
++				player.name += " - " + player.playerName;
++
++				player.SetPlayerID(joinList[i]);
++
++				if (Checkpoints.Count > checkpointCounter + 1)
++				{
++					if (Checkpoints[checkpointCounter] != null)
++					{
++						Checkpoints[checkpointCounter].SpawnPlayer(player);
++						characterCounter++;
++						spawned = true;
++						checkpointCounter++;
++					}
++				}
++				if (!spawned)
++				{
++					Checkpoints[checkpointCounter].SpawnPlayer(player);
++					characterCounter++;
++				}
++
++            }
++		}
++
+ 		protected virtual void CheckMultiplayerEndGame()
+ 		{
+@@ -30,5 +208,5 @@ namespace MoreMountains.CorgiEngine
+ 				{
+ 					stillAlive++;
+-					winnerID = player.PlayerID;
++					winnerID = player.playerName;
+ 				}
+ 			}
+@@ -62,5 +240,5 @@ namespace MoreMountains.CorgiEngine
+ 			yield return new WaitForSeconds (2f);
+ 			// we reload the current scene to start a new game
+-			MMSceneLoadingManager.LoadScene(SceneManager.GetActiveScene ().name);
++			MMSceneLoadingManager.LoadScene(startSceneName);
+ 		}
+ 
+@@ -83,9 +261,14 @@ namespace MoreMountains.CorgiEngine
+                 {
+ 					RegularSpawnSingleCharacter_AfterDeath();
++                    string str = player.name.Substring(player.name.Length - 1);
++                    Debug.Log(str + "Lifes");
++                    // GameObject.Find(str + "Lifes").transform.GetChild(characterHealth.life - 1).gameObject.SetActive(false);
++                    GameObject.Find(str + "Lifes").transform.GetChild(characterHealth.life - 1).gameObject.GetComponent<SpriteRenderer>().sprite = emptyHeart;
++
+                     characterHealth.life--;
+ 
+ 				}
+ 				else
+-					StartCoroutine (RemovePlayer (player));
++					StartCoroutine (RemovePlayer (player)); Debug.Log("Á¦°ÅµÊ");
+ 			}
+ 
+@@ -107,8 +290,4 @@ namespace MoreMountains.CorgiEngine
+ 				// spawned = false;
+                 
+-				if (AutoAttributePlayerIDs)
+-				{
+-					player.SetPlayerID("Player" + characterCounter);
+-				}
+ 				// Respawnable respawn = player.GetComponent<Respawnable>();
+ 				// startAfterDeath.AssignObjectToCheckPoint(respawn);

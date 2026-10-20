@@ -1,0 +1,11 @@
+diff --git a/Assets/CorgiEngine/Common/Scripts/Agents/Health/Health.cs b/Assets/CorgiEngine/Common/Scripts/Agents/Health/Health.cs
+index b055e05..e2b7c7e 100644
+--- a/Assets/CorgiEngine/Common/Scripts/Agents/Health/Health.cs
++++ b/Assets/CorgiEngine/Common/Scripts/Agents/Health/Health.cs
+@@ -557,5 +557,5 @@ namespace MoreMountains.CorgiEngine
+                     if (GUIManager.Instance != null)
+                     {
+-                        GUIManager.Instance.UpdateHealthBar(CurrentHealth, 0f, MaximumHealth, _character.PlayerID);
++                        GUIManager.Instance.UpdateHealthBar(CurrentHealth, 0f, MaximumHealth, _character.playerName);
+                     }
+                 }

@@ -1,0 +1,12 @@
+diff --git a/Assets/CorgiEngine/Common/Scripts/Agents/Core/Character.cs b/Assets/CorgiEngine/Common/Scripts/Agents/Core/Character.cs
+index 8f128b8..11f65b9 100644
+--- a/Assets/CorgiEngine/Common/Scripts/Agents/Core/Character.cs
++++ b/Assets/CorgiEngine/Common/Scripts/Agents/Core/Character.cs
+@@ -194,4 +194,7 @@ namespace MoreMountains.CorgiEngine
+         protected CharacterPersistence _characterPersistence;
+ 
++		[HideInInspector]
++		public String playerName;
++
+         /// <summary>
+         /// Initializes this instance of the character

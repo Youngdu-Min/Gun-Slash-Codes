@@ -1,0 +1,24 @@
+diff --git a/Assets/CorgiEngine/Common/Scripts/Managers/GameManager.cs b/Assets/CorgiEngine/Common/Scripts/Managers/GameManager.cs
+index df30714..976bd16 100644
+--- a/Assets/CorgiEngine/Common/Scripts/Managers/GameManager.cs
++++ b/Assets/CorgiEngine/Common/Scripts/Managers/GameManager.cs
+@@ -5,4 +5,5 @@ using System.Collections.Generic;
+ using MoreMountains.InventoryEngine;
+ using MoreMountains.Feedbacks;
++using UnityEngine.EventSystems;
+ 
+ namespace MoreMountains.CorgiEngine
+@@ -188,4 +189,6 @@ namespace MoreMountains.CorgiEngine
+ 		protected int _initialCurrentLives;
+ 
++		public GameObject pauseFirstButton;
++
+ 		protected override void Awake()
+ 		{
+@@ -308,4 +311,6 @@ namespace MoreMountains.CorgiEngine
+ 					GUIManager.Instance.SetPause(true);	
+ 					_pauseMenuOpen = true;
++					EventSystem.current.SetSelectedGameObject(null);
++					EventSystem.current.SetSelectedGameObject(pauseFirstButton);
+ 					SetActiveInventoryInputManager (false);
+ 				}

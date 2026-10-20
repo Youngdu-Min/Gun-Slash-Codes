@@ -1,0 +1,17 @@
+diff --git a/Assets/CorgiEngine/Common/Scripts/Agents/CharacterAbilities/CharacterHandleWeapon.cs b/Assets/CorgiEngine/Common/Scripts/Agents/CharacterAbilities/CharacterHandleWeapon.cs
+index 7a35cc1..eb21409 100644
+--- a/Assets/CorgiEngine/Common/Scripts/Agents/CharacterAbilities/CharacterHandleWeapon.cs
++++ b/Assets/CorgiEngine/Common/Scripts/Agents/CharacterAbilities/CharacterHandleWeapon.cs
+@@ -201,8 +201,8 @@ namespace MoreMountains.CorgiEngine
+             }			
+ 
+-			if (_inputManager.ReloadButton.State.CurrentState == MMInput.ButtonStates.ButtonDown)
+-			{
+-				Reload();
+-            }
++			//if (_inputManager.ReloadButton.State.CurrentState == MMInput.ButtonStates.ButtonDown)
++			//{
++			//	Reload();
++            //}
+ 
+             if ((_inputManager.ShootButton.State.CurrentState == MMInput.ButtonStates.ButtonUp) || (_inputManager.ShootAxis == MMInput.ButtonStates.ButtonUp))

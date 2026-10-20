@@ -1,0 +1,118 @@
+diff --git a/Assets/CorgiEngine/Common/Scripts/Agents/Weapons/Bomb.cs b/Assets/CorgiEngine/Common/Scripts/Agents/Weapons/Bomb.cs
+index 40e0879..f69f900 100644
+--- a/Assets/CorgiEngine/Common/Scripts/Agents/Weapons/Bomb.cs
++++ b/Assets/CorgiEngine/Common/Scripts/Agents/Weapons/Bomb.cs
+@@ -18,7 +18,10 @@ namespace MoreMountains.CorgiEngine
+         [Header("Explosion")]
+ 
++        public bool NotWaitExplosion;
++        bool InitialExplosion;
+         /// the duration(in seconds) before the explosion
+         [Tooltip("the duration(in seconds) before the explosion")]
+ 		public float TimeBeforeExplosion = 2f;
++
+ 		/// the MMFeedbacks to trigger on explosion
+ 		[Tooltip("the MMFeedbacks to trigger on explosion")]
+@@ -50,11 +53,22 @@ namespace MoreMountains.CorgiEngine
+         protected Color _initialColor;
+ 		protected Color _flickerColor = new Color32(255, 20, 20, 255);
+-
++        float ignoreTime;
++        [SerializeField]
++        int layer = 9;
++		[SerializeField]
++		bool bombMultipleTime;
+         /// <summary>
+         /// On enable we initialize our bomb
+         /// </summary>
++
++        private void Awake()
++        {
++            InitialExplosion = NotWaitExplosion;
++        }
++
+         protected virtual void OnEnable()
+ 		{
+ 			Initialization ();
++
+ 		}
+ 
+@@ -82,4 +96,5 @@ namespace MoreMountains.CorgiEngine
+ 
+             _poolableObject = gameObject.MMGetComponentNoAlloc<MMPoolableObject> ();
++            Debug.Log("풀 " + _poolableObject);
+ 			if (_poolableObject != null)
+ 			{
+@@ -88,6 +103,9 @@ namespace MoreMountains.CorgiEngine
+ 
+ 			_timeSinceStart = 0;
++            ignoreTime = 0;
+ 			_flickering = false;
+ 			_damageAreaActive = false;
++            NotWaitExplosion = InitialExplosion;
++
+         }
+ 
+@@ -96,6 +114,12 @@ namespace MoreMountains.CorgiEngine
+         /// </summary>
+ 		protected virtual void Update()
++		{
++            if (!NotWaitExplosion)
+             {
+                 _timeSinceStart += Time.deltaTime;
++            }
++            else
++                ignoreTime += Time.deltaTime;
++			
+ 			// flickering
+ 			if (_timeSinceStart >= TimeBeforeFlicker)
+@@ -115,4 +139,5 @@ namespace MoreMountains.CorgiEngine
+ 			{
+ 				EnableDamageArea ();
++                if(_renderer != null)
+ 				    _renderer.enabled = false;
+                 ExplosionFeedback?.PlayFeedbacks();
+@@ -130,13 +155,21 @@ namespace MoreMountains.CorgiEngine
+         /// </summary>
+ 		protected virtual void Destroy()
++		{
++            Debug.Log("파괴!");
++            if (_renderer != null)
+             {
+                 _renderer.enabled = true;
+ 			    _renderer.material.color = _initialColor;
++
++            }
++
+             if (_poolableObject != null)
+ 			{
++                Debug.Log("파괴1");
+                 _poolableObject.Destroy ();
+ 			}
+ 			else
+ 			{
++                Debug.Log("파괴2");
+                 Destroy ();
+ 			}
+@@ -159,4 +192,20 @@ namespace MoreMountains.CorgiEngine
+ 			DamageAreaCollider.enabled = false;
+ 		}
++
++        private void OnTriggerEnter2D(Collider2D col)
++        {
++            if((col.gameObject.layer == layer || col.gameObject.layer == 11|| col.gameObject.layer == 8) && (NotWaitExplosion && ignoreTime >= TimeBeforeExplosion || !NotWaitExplosion))
++            {
++				if (!bombMultipleTime)
++					_timeSinceStart = TimeBeforeExplosion;
++                else
++                {
++					EnableDamageArea();
++					_damageAreaActive = true;
++					ExplosionFeedback?.PlayFeedbacks();
++				}
++				NotWaitExplosion = false;
++            }
++        }
+     }
+ }
+\ No newline at end of file

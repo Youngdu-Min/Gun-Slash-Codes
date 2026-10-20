@@ -1,0 +1,27 @@
+diff --git a/Assets/CorgiEngine/Common/Scripts/Agents/Weapons/Weapon.cs b/Assets/CorgiEngine/Common/Scripts/Agents/Weapons/Weapon.cs
+index 82f55d5..77a0c22 100644
+--- a/Assets/CorgiEngine/Common/Scripts/Agents/Weapons/Weapon.cs
++++ b/Assets/CorgiEngine/Common/Scripts/Agents/Weapons/Weapon.cs
+@@ -101,4 +101,5 @@ namespace MoreMountains.CorgiEngine
+         [Tooltip("the current amount of ammo loaded inside the weapon")]
+         public int CurrentAmmoLoaded = 0;
++        Weapon weapondata;
+ 
+         [MMInspectorGroup("Position", true, 32)]
+@@ -367,4 +368,6 @@ namespace MoreMountains.CorgiEngine
+                 _permanentMovementMultiplierStorage = _characterHorizontalMovement.MovementSpeedMultiplier;
+             }
++
++            weapondata = CharacterHandleWeapon.InitialWeapon;
+         }
+         
+@@ -663,4 +666,9 @@ namespace MoreMountains.CorgiEngine
+             _delayBetweenUsesCounter = TimeBetweenUses;
+             WeaponState.ChangeState(WeaponStates.WeaponDelayBetweenUses);
++            if (CurrentAmmoLoaded <= 0 && AutoDestroyWhenEmpty)
++            {
++                WeaponState.ChangeState(WeaponStates.WeaponStop);
++                CharacterHandleWeapon.ChangeWeapon(weapondata, "1", false);
++            }
+         }
+ 

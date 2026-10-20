@@ -1,0 +1,42 @@
+diff --git a/Assets/CorgiEngine/Common/Scripts/Managers/InputManager.cs b/Assets/CorgiEngine/Common/Scripts/Managers/InputManager.cs
+index e5a7e71..b892dfd 100644
+--- a/Assets/CorgiEngine/Common/Scripts/Managers/InputManager.cs
++++ b/Assets/CorgiEngine/Common/Scripts/Managers/InputManager.cs
+@@ -201,22 +201,22 @@ namespace MoreMountains.CorgiEngine
+ 			ButtonList = new List<MMInput.IMButton> ();
+             ButtonList.Add(JumpButton = new MMInput.IMButton(PlayerID, "Jump", JumpButtonDown, JumpButtonPressed, JumpButtonUp));
+-            ButtonList.Add(SwimButton = new MMInput.IMButton(PlayerID, "Swim", SwimButtonDown, SwimButtonPressed, SwimButtonUp));
+-            ButtonList.Add(GlideButton = new MMInput.IMButton(PlayerID, "Glide", GlideButtonDown, GlideButtonPressed, GlideButtonUp));
+-            ButtonList.Add(InteractButton = new MMInput.IMButton (PlayerID, "Interact", InteractButtonDown, InteractButtonPressed, InteractButtonUp));
+-			ButtonList.Add(JetpackButton = new MMInput.IMButton (PlayerID, "Jetpack", JetpackButtonDown, JetpackButtonPressed, JetpackButtonUp)); 
+-			ButtonList.Add(RunButton  = new MMInput.IMButton (PlayerID, "Run", RunButtonDown, RunButtonPressed, RunButtonUp));
+-			ButtonList.Add(DashButton = new MMInput.IMButton(PlayerID, "Dash", DashButtonDown, DashButtonPressed, DashButtonUp));
+-			ButtonList.Add(RollButton = new MMInput.IMButton(PlayerID, "Roll", RollButtonDown, RollButtonPressed, RollButtonUp));
+-            ButtonList.Add(FlyButton = new MMInput.IMButton(PlayerID, "Fly", FlyButtonDown, FlyButtonPressed, FlyButtonUp));
++            // ButtonList.Add(SwimButton = new MMInput.IMButton(PlayerID, "Swim", SwimButtonDown, SwimButtonPressed, SwimButtonUp));
++            // ButtonList.Add(GlideButton = new MMInput.IMButton(PlayerID, "Glide", GlideButtonDown, GlideButtonPressed, GlideButtonUp));
++            // ButtonList.Add(InteractButton = new MMInput.IMButton (PlayerID, "Interact", InteractButtonDown, InteractButtonPressed, InteractButtonUp));
++			// ButtonList.Add(JetpackButton = new MMInput.IMButton (PlayerID, "Jetpack", JetpackButtonDown, JetpackButtonPressed, JetpackButtonUp)); 
++			// ButtonList.Add(RunButton  = new MMInput.IMButton (PlayerID, "Run", RunButtonDown, RunButtonPressed, RunButtonUp));
++			// ButtonList.Add(DashButton = new MMInput.IMButton(PlayerID, "Dash", DashButtonDown, DashButtonPressed, DashButtonUp));
++			// ButtonList.Add(RollButton = new MMInput.IMButton(PlayerID, "Roll", RollButtonDown, RollButtonPressed, RollButtonUp));
++            // ButtonList.Add(FlyButton = new MMInput.IMButton(PlayerID, "Fly", FlyButtonDown, FlyButtonPressed, FlyButtonUp));
+             ButtonList.Add(ShootButton = new MMInput.IMButton(PlayerID, "Shoot", ShootButtonDown, ShootButtonPressed, ShootButtonUp));
+             ButtonList.Add(SecondaryShootButton = new MMInput.IMButton(PlayerID, "SecondaryShoot", SecondaryShootButtonDown, SecondaryShootButtonPressed, SecondaryShootButtonUp));
+-            ButtonList.Add(ReloadButton = new MMInput.IMButton (PlayerID, "Reload", ReloadButtonDown, ReloadButtonPressed, ReloadButtonUp));
+-			ButtonList.Add(SwitchWeaponButton = new MMInput.IMButton (PlayerID, "SwitchWeapon", SwitchWeaponButtonDown, SwitchWeaponButtonPressed, SwitchWeaponButtonUp));
++            // ButtonList.Add(ReloadButton = new MMInput.IMButton (PlayerID, "Reload", ReloadButtonDown, ReloadButtonPressed, ReloadButtonUp));
++			// ButtonList.Add(SwitchWeaponButton = new MMInput.IMButton (PlayerID, "SwitchWeapon", SwitchWeaponButtonDown, SwitchWeaponButtonPressed, SwitchWeaponButtonUp));
+ 			ButtonList.Add(PauseButton = new MMInput.IMButton (PlayerID, "Pause", PauseButtonDown, PauseButtonPressed, PauseButtonUp));
+-            ButtonList.Add(PushButton = new MMInput.IMButton(PlayerID, "Push", PushButtonDown, PushButtonPressed, PushButtonUp));
+-            ButtonList.Add(SwitchCharacterButton = new MMInput.IMButton(PlayerID, "SwitchCharacter", SwitchCharacterButtonDown, SwitchCharacterButtonPressed, SwitchCharacterButtonUp));
+-            ButtonList.Add(TimeControlButton = new MMInput.IMButton(PlayerID, "TimeControl", TimeControlButtonDown, TimeControlButtonPressed, TimeControlButtonUp));
+-            ButtonList.Add(GrabButton = new MMInput.IMButton(PlayerID, "Grab", GrabButtonDown, GrabButtonPressed, GrabButtonUp));
+-            ButtonList.Add(ThrowButton = new MMInput.IMButton(PlayerID, "Throw", ThrowButtonDown, ThrowButtonPressed, ThrowButtonUp));
++            // ButtonList.Add(PushButton = new MMInput.IMButton(PlayerID, "Push", PushButtonDown, PushButtonPressed, PushButtonUp));
++            // ButtonList.Add(SwitchCharacterButton = new MMInput.IMButton(PlayerID, "SwitchCharacter", SwitchCharacterButtonDown, SwitchCharacterButtonPressed, SwitchCharacterButtonUp));
++            // ButtonList.Add(TimeControlButton = new MMInput.IMButton(PlayerID, "TimeControl", TimeControlButtonDown, TimeControlButtonPressed, TimeControlButtonUp));
++            // ButtonList.Add(GrabButton = new MMInput.IMButton(PlayerID, "Grab", GrabButtonDown, GrabButtonPressed, GrabButtonUp));
++            // ButtonList.Add(ThrowButton = new MMInput.IMButton(PlayerID, "Throw", ThrowButtonDown, ThrowButtonPressed, ThrowButtonUp));
+         }
+ 

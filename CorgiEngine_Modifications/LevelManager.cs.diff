@@ -1,0 +1,11 @@
+diff --git a/Assets/CorgiEngine/Common/Scripts/Managers/LevelManager.cs b/Assets/CorgiEngine/Common/Scripts/Managers/LevelManager.cs
+index e516853..569ffa6 100644
+--- a/Assets/CorgiEngine/Common/Scripts/Managers/LevelManager.cs
++++ b/Assets/CorgiEngine/Common/Scripts/Managers/LevelManager.cs
+@@ -456,5 +456,5 @@ namespace MoreMountains.CorgiEngine
+ 				}
+ 
+-				player.name += " - " + player.PlayerID;
++				player.name += " - " + player.playerName;
+ 
+ 				if (Checkpoints.Count > checkpointCounter+1)

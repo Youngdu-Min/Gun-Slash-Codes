@@ -1,0 +1,31 @@
+diff --git a/Assets/CorgiEngine/Common/Scripts/GUI/GUIManager.cs b/Assets/CorgiEngine/Common/Scripts/GUI/GUIManager.cs
+index 64fc044..1c3c7d9 100644
+--- a/Assets/CorgiEngine/Common/Scripts/GUI/GUIManager.cs
++++ b/Assets/CorgiEngine/Common/Scripts/GUI/GUIManager.cs
+@@ -20,4 +20,5 @@ namespace MoreMountains.CorgiEngine
+ 		[Tooltip("the jetpack bar")]
+ 		public MMProgressBar[] HealthBars;
++		public MMProgressBar[] KnifeBars;
+ 		/// the jetpack bar
+ 		[Tooltip("the jetpack bar")]
+@@ -273,4 +274,20 @@ namespace MoreMountains.CorgiEngine
+ 	    	}
+ 
++	    }
++
++		public virtual void UpdateKnifeBar(float currentDelay, float minDelay, float maxDelay, string playerID)
++		{
++			if (KnifeBars == null) { return; }
++			if (KnifeBars.Length <= 0) { return; }
++
++			foreach (MMProgressBar knifeBar in KnifeBars)
++			{
++				if (knifeBar == null) { continue; }
++				if (knifeBar.PlayerID == playerID)
++				{
++					knifeBar.UpdateBar(currentDelay, minDelay, maxDelay);
++				}
++			}
++
+ 		}
+ 
