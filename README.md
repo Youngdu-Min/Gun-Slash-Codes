@@ -12,6 +12,13 @@
 
 Corgi Engine의 2D 슈터 기반 위에서, 엔진이 지원하지 않는 로컬 4인 대전 흐름과 무기·돌진 시스템을 직접 만들었습니다.
 
+## 시연 영상 · 플레이
+
+[![Gun Slash 시연 영상](https://img.youtube.com/vi/q-bz3kCp5Ck/hqdefault.jpg)](https://www.youtube.com/watch?v=q-bz3kCp5Ck)
+
+- [▶ 시연 영상 (YouTube)](https://www.youtube.com/watch?v=q-bz3kCp5Ck)
+- [🎮 플레이 (itch.io)](https://youngdoo.itch.io/gun-slash)
+
 ## 구현 범위
 
 - **로비와 플레이어 참가**: 각 입력 장치의 참가 키로 최대 4명 등록, 2명 이상이면 게임 시작

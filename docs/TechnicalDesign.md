@@ -22,6 +22,7 @@
 | 개발 | 1인, 7주 (2021.10 ~ 12, 대학 캡스톤 디자인) |
 | 엔진 | Unity + Corgi Engine (2D 플랫포머/슈터 에셋) |
 | 입력 | 키보드 2 + 게임패드 4 중 최대 4명 |
+| 링크 | [시연 영상 (YouTube)](https://www.youtube.com/watch?v=q-bz3kCp5Ck) · [플레이 (itch.io)](https://youngdoo.itch.io/gun-slash) |
 
 ![게임 화면](images/gameplay.jpg)
 
